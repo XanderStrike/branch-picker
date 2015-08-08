@@ -1,6 +1,6 @@
 # branch-picker
 
-Super simple visual branch picker for git. Useful when you've got lots of projects.
+Super simple visual branch picker for git. Useful when you've got lots of branches.
 
 ### Usage
 
@@ -10,7 +10,7 @@ Run the script in your git repository, select a branch with j and k (or up down)
     > AddLogin
       SaveLocation
       master
-    Use j/k and enter to select
+    Use j/k and enter to select. Hit m for master.
 
 For bonus points, create a symlink somewhere in your path:
 
