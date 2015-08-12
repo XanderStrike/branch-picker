@@ -1,4 +1,11 @@
 #!/usr/bin/ruby
+
+# Alex Standke
+#   Aug 2015
+
+# branch.rb
+#  Helps you pick git branches. Total hack.
+
 require 'io/console'
 require 'colorize'
 require 'curses'
@@ -28,7 +35,14 @@ ensure
   return input
 end
 
-def draw_branches(selected)
+def find_in_arr(arr, str)
+  arr.map(&:downcase).each_with_index do |elem, i|
+    return i if elem.include?(str.downcase)
+  end
+  -1
+end
+
+def draw_branches(selected, state, search_str)
   setpos(0, 0)
   addstr("Pick a branch\n")
 
@@ -48,36 +62,64 @@ def draw_branches(selected)
     branch_name
   end
 
-  addstr("Use j/k and enter to select. Hit m for master.\n")
+  case state
+  when :default
+    addstr("Use j/k and enter to select. Use / to search. Hit m for master.\n")
+  when :search
+    addstr("/#{search_str}\n")
+  end
   refresh
   branches
 end
 
 selected = 0
-branches = draw_branches(selected)
+
+state = :default
+search_str = ''
+branches = draw_branches(selected, state, search_str)
 
 loop do
   c = read_char
 
-  case c.downcase
-  when "\r", 'f'
-    close_screen
-    `git checkout #{branches[selected]}`
-    exit 0
-  when "\e[A", 'k'
-    selected -= 1
-  when "\e[B", 'j'
-    selected += 1
-  when 'm'
-    close_screen
-    `git checkout master`
-    exit 0
-  when "\e", "\u0003", 'q'
-    close_screen
-    exit 0
+  case state
+  when :default
+    case c.downcase
+    when "\r", 'f'
+      close_screen
+      `git checkout #{branches[selected]}`
+      exit 0
+    when "\e[A", 'k'
+      selected -= 1
+    when "\e[B", 'j'
+      selected += 1
+    when '/'
+      state = :search
+    when 'm'
+      close_screen
+      `git checkout master`
+      exit 0
+    when "\e", "\u0003", 'q'
+      close_screen
+      exit 0
+    end
+  when :search
+    case c
+    when "\e", "\u0003"
+      search_str = ''
+      state = :default
+    when "\u007F"
+      search_str = search_str[0...-1]
+    when "\r"
+      close_screen
+      `git checkout #{branches[selected]}`
+      exit 0
+    else
+      search_str += c
+      selected = find_in_arr(branches, search_str)
+    end
   end
 
   selected = selected % branches.size
 
-  draw_branches(selected)
+  draw_branches(selected, state, search_str)
 end
