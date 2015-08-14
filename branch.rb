@@ -36,8 +36,16 @@ ensure
 end
 
 def find_in_arr(arr, str)
-  arr.map(&:downcase).each_with_index do |elem, i|
-    return i if elem.include?(str.downcase)
+  list = arr.map(&:downcase)
+
+  q = str.downcase
+  list.each_with_index do |elem, i|
+    return i if elem.include?(q)
+  end
+
+  regex_q = q.split('').join('.*')
+  list.each_with_index do |elem, i|
+    return i if elem.match(/#{regex_q}/)
   end
   -1
 end
@@ -107,8 +115,14 @@ loop do
     when "\e", "\u0003"
       search_str = ''
       state = :default
+    when "\e[A"
+      selected -= 1
+    when "\e[B"
+      selected += 1
     when "\u007F"
+      state = :default if search_str.size == 0
       search_str = search_str[0...-1]
+      selected = find_in_arr(branches, search_str)
     when "\r"
       close_screen
       `git checkout #{branches[selected]}`
