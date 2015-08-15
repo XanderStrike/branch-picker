@@ -9,6 +9,7 @@
 require 'io/console'
 require 'colorize'
 require 'curses'
+require 'fuzzy_match'
 include Curses
 
 init_screen
@@ -36,18 +37,16 @@ ensure
 end
 
 def find_in_arr(arr, str)
-  list = arr.map(&:downcase)
-
+  # simple, fast, for accurate typists
   q = str.downcase
-  list.each_with_index do |elem, i|
+  arr.map(&:downcase).each_with_index do |elem, i|
     return i if elem.include?(q)
   end
 
-  regex_q = q.split('').join('.*')
-  list.each_with_index do |elem, i|
-    return i if elem.match(/#{regex_q}/)
-  end
-  -1
+  # less fast, more forgiving
+  matched_branch = FuzzyMatch.new(arr).find(str)
+  return -1 if matched_branch.nil?
+  arr.index(matched_branch)
 end
 
 def draw_branches(selected, state, search_str)
