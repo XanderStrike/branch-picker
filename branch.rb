@@ -4,10 +4,9 @@
 #   Aug 2015
 
 # branch.rb
-#  Helps you pick git branches. Total hack.
+#   Helps you pick git branches. Total hack.
 
 require 'io/console'
-require 'colorize'
 require 'curses'
 require 'fuzzy_match'
 include Curses
