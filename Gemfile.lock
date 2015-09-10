@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    colorize (0.7.7)
     curses (1.0.1)
     fuzzy_match (2.1.0)
 
@@ -9,7 +8,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  colorize
   curses
   fuzzy_match
 

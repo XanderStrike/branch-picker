@@ -78,6 +78,15 @@ def draw_branches(selected, state, search_str)
   branches
 end
 
+# quick find with args
+if ARGV.count > 0
+  clean = GIT_BRANCH.map { |br| br.gsub('* ', '').gsub('  ', '') }
+  index = find_in_arr(clean, ARGV.first)
+  `git checkout #{clean[index]}`
+  exit 0
+end
+
+# main program
 selected = 0
 
 state = :default
