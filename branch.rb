@@ -70,7 +70,7 @@ def draw_branches(selected, state, search_str)
 
   case state
   when :default
-    addstr("Use j/k and enter to select. Use / to search. Hit m for master.\n")
+    addstr("Use j/k and enter to select. Use / to search. Hit m for master. Hit d to delete.\n")
   when :search
     addstr("/#{search_str}\n")
   end
@@ -112,6 +112,10 @@ loop do
     when 'm'
       close_screen
       `git checkout master`
+      exit 0
+    when 'd'
+      close_screen
+      `git branch -d #{branches[selected]}`
       exit 0
     when "\e", "\u0003", 'q'
       close_screen
